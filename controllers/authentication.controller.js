@@ -3,6 +3,7 @@ const DB = require('../models');
 
 const Role = DB.role;
 const User = DB.user;
+const SMTPpassword = process.env.SMTP_EMAIL_PASSWORD || authConfig.emailPassword;
 
 var JWT = require('jsonwebtoken');
 
@@ -121,7 +122,7 @@ exports.resetPassword = (req, res) => {
                 service: 'gmail',
                 auth: {
                     user: authConfig.senderEmail,
-                    pass: authConfig.emailPassword
+                    pass: SMTPpassword
                 }
             });
 

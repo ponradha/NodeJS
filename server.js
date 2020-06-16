@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const dbConfig = require('./config/db.config.js');
 
-
+const DBpassword = process.env.DATABASE_PASSWORD || dbConfig.password;
 
 const app = express();
 
@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
  */
 
 // Connect to MongoDB Atlas
-mongoose.connect(`mongodb+srv://${dbConfig.user}:${dbConfig.password}@cluster0-ga51w.mongodb.net/${dbConfig.DB}?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://${dbConfig.user}:${DBpassword}@cluster0-ga51w.mongodb.net/${dbConfig.DB}?retryWrites=true&w=majority`, {
   useNewUrlParser: true
 })
 .then(() =>{
