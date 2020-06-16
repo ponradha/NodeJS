@@ -6,6 +6,10 @@ const User = DB.user;
 
 var JWT = require('jsonwebtoken');
 
+const nodeMailer = require('nodemailer');
+const passwordGenerator = require('generate-password');
+const CryptoJS = require('crypto-js');
+
 exports.signup = (req, res) => {
     console.log('Gonna Signup -->', req.body);
     const roleStr = 'level1';
@@ -63,3 +67,86 @@ exports.signin = (req, res) => {
     });
 }
 
+exports.resetPassword = (req, res) => {
+    console.log('Gonna resetPassword -->', req.body);
+    const mailRegex = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
+
+    if (!mailRegex.test(req.body.uMail)) {
+        res.status(500).send({message: 'Email is not valid.'});
+        return;
+    }
+
+    User.findOne({
+        email: req.body.uMail
+    })
+    .exec((err, user) => {
+        console.log('User--->', user);
+        if(err) {
+            res.status(500).send({message: err});
+            return;
+        }
+
+        if(!user) {
+            res.status(404).send({message: 'User Not found'});
+            return;
+        }
+
+        if(user.email === req.body.uMail) {
+
+            console.log('RESET 000000');
+
+            const newPassword = passwordGenerator.generate({
+                length: 10,
+                numbers: true,
+                strict: true
+            });
+
+            console.log('newPassword  is--', newPassword);
+
+            const hashedPassword = CryptoJS.SHA256(newPassword).toString();
+            
+            console.log('hashedPassword  is--', hashedPassword);
+
+            User.findOneAndUpdate({email: req.body.uMail}, {password: hashedPassword}, (err, user) => {
+                if(err) {
+                    res.status(500).send({message: 'Could not reset password, ' + err});
+                    return;
+                }
+
+                console.log('User issssss-->', user);
+
+            })
+            
+            const transporter = nodeMailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: authConfig.senderEmail,
+                    pass: authConfig.emailPassword
+                }
+            });
+
+            let mailOptions = {
+                from: authConfig.senderEmail,
+                to: req.body.uMail,
+                subject: 'RESET PASSWORD - ROBOTO',
+                text: `Your password has been reset and the new password is ${newPassword}. Try logging in with your new password.`
+            };
+
+            transporter.sendMail(mailOptions, (error, success) => {
+                if(err) {
+                    console.log('Error...Could not send email');
+                    res.status(500).send({message: 'Could not reset password, ' + err});
+                    return;
+                } else {
+                    console.log('MAil sent...', success);
+                }
+            });
+
+
+            res.status(200).send({message: 'Your password has been reset and the new password has been sent your registered email. Try logging in with your new password.'});
+            return;
+        }
+
+
+    });
+}

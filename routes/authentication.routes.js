@@ -13,4 +13,5 @@ module.exports = function(app) {
     app.post('/api/auth/signup', [signupValidator.validateInput], authController.signup);
 
     app.post('/api/auth/signin', authController.signin);
+    app.post('/api/auth/forgotpassword', authController.resetPassword);
 }
