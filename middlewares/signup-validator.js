@@ -25,7 +25,11 @@ validateInput = (req, res, next) => {
     } else if (req.body.uHobbies.split(',').length < 2) {
         res.status(500).send({message: 'Minimum 2 hobbies are required.'});
         return;
-    } else if (gender === '' || gender !== 'm' || gender !== 'f' || gender !== 'o') {
+    } 
+    
+    if (gender === 'm' || gender === 'f' || gender === 'o') {
+        console.log('Valid Gender...');
+    } else {
         res.status(500).send({message: 'Gender is not valid'});
         return;
     }
