@@ -32,6 +32,10 @@ exports.signup = (req, res) => {
             return;
         }
 
+        if(!user) {
+            res.status(500).send({message: 'Could not register the register. Check with the admin'});
+        }
+
         res.send({message: 'User is Registered Successfully!'});
     });
 }
