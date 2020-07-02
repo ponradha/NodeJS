@@ -12,7 +12,8 @@ const User = mongoose.model(
         hobbies: String,
         gender: String,
         role: String,
-        createdDate: {type: Date, required: true},
+        createdDate: {type: String, required: true},
+        modifiedDate: String
     })
 );
 

@@ -14,6 +14,7 @@ const CryptoJS = require('crypto-js');
 exports.signup = (req, res) => {
     console.log('Gonna Signup -->', req.body);
     const roleStr = 'level1';
+    const dateStr = new Date().toLocaleString();
     const user = new User({
         name: req.body.uName,
         email: req.body.uMail,
@@ -23,7 +24,8 @@ exports.signup = (req, res) => {
         pan: req.body.uPAN,
         hobbies: req.body.uHobbies,
         gender: req.body.uGender,
-        role: roleStr
+        role: roleStr,
+        createdDate: dateStr
     });
 
     user.save((err, user) => {

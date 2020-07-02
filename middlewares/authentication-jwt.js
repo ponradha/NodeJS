@@ -21,6 +21,10 @@ verifyToken = (req, res, next) => {
         this.userId = decoded.id;
         this.userRole = decoded.role;
 
+        req.body.userEmail = decoded.id;
+        req.body.userRole = decoded.role;
+        
+
         next();
     })
 }

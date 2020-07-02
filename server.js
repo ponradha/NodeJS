@@ -35,7 +35,8 @@ app.get("/", (req, res) => {
 
 // Connect to MongoDB Atlas
 mongoose.connect(`mongodb+srv://${dbConfig.user}:${DBpassword}@cluster0-ga51w.mongodb.net/${dbConfig.DB}?retryWrites=true&w=majority`, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useFindAndModify: false
 })
 .then(() =>{
     console.log('Connected to DB');
