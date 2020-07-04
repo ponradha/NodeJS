@@ -64,12 +64,12 @@ exports.signin = (req, res) => {
             return;
         }
 
-        var token = JWT.sign({id: user.email, role: user.role}, authConfig.secret, {expiresIn: 10000});
+        var token = JWT.sign({id: user._id, role: user.role}, authConfig.secret, {expiresIn: 10000});
 
         res.status(200).send({
             accessToken: token,
             role: user.role,
-            email: user.email
+            _id: user._id
         });
     });
 }

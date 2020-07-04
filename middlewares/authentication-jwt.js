@@ -4,7 +4,7 @@ const db = require('../models');
 const Role = db.role;
 const User = db.user;
 
-let userId;  // User Email
+let id;  // User Collection unique ID
 let userRole;
 
 verifyToken = (req, res, next) => {
@@ -18,21 +18,20 @@ verifyToken = (req, res, next) => {
         if(err) {
             return res.status(403).send({message: 'Unauthorised!'});
         }
-        this.userId = decoded.id;
+        this.id = decoded.id;
         this.userRole = decoded.role;
 
-        req.body.userEmail = decoded.id;
-        req.body.userRole = decoded.role;
-        
+        req.body.id = decoded.id;
+        req.body.userRole = decoded.role;        
 
         next();
     })
 }
 
 isAdmin = (req, res, next) => {
-    console.log('Verified User is-->', this.userId);
+    console.log('Verified User is-->', this.id);
     console.log('Verified User Role is-->', this.userRole);
-    User.find({email: this.userId}).exec((err, user) => {
+    User.find({_id: this.id}).exec((err, user) => {
         if(err) {
             res.status(500).send({message: err});
             return;
@@ -84,7 +83,7 @@ getUserRoleFromToken = (token) => {
 };
 
 getUserIdFromToken = () => {
-    return this.userId;
+    return this.id;
 };
 
 getUserRoleFromToken = () => {

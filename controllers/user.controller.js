@@ -9,16 +9,8 @@ const User = DB.user;
 
 exports.getUser = (req, res) => {
     let token = req.headers['x-access-token'];
-    console.log('Gonna getUser() -->', req.body);
-    jwt.verify(token, authConfig.secret, (err, decoded) => {
-        if(err) {
-            return res.status(403).send({message: 'Unauthorised!'});
-        }
-        const userEmail = decoded.id;
-        console.log('userEmail **** -->', userEmail);
-        User.find({ email: userEmail }, 'name email mobileno gender age pan hobbies')
+        User.findOne({ _id: req.params.id }, 'name email mobileno gender age pan hobbies')
         .exec((err, user) => {
-            console.log('User--->', user);
             if(err) {
                 res.status(500).send({message: err});
                 return;
@@ -31,34 +23,29 @@ exports.getUser = (req, res) => {
     
             res.status(200).send(user);
         });
-    });
 }
 
 
 exports.getUsersList = (req, res) => {
-    console.log('Gonna getUserList() -->', req.body);
     User.find({}, 'name email mobileno gender age pan hobbies')
     .exec((err, user) => {
-        console.log('User--->', user);
         if(err) {
             res.status(500).send({message: err});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User Not found'});
+            res.status(404).send({message: 'Could not fetch users.'});
             return;
         }
-        console.log('GONNA SEND RESPONSE');
+        console.log('GONNA SEND USERS LIST');
         res.status(200).send(user);
     });
 }
 
 exports.deleteUser = (req, res) => {
     console.log('Gonna Delete User -->', req);
-    console.log(' req.params -->', req.params);
-    User.findByIdAndRemove(req.params.userID, (err, user) => {
-        console.log('User--->', user);
+    User.findByIdAndRemove(req.params.id, (err, user) => {
         if(err) {
             res.status(500).send({message: err});
             return;
@@ -75,8 +62,8 @@ exports.deleteUser = (req, res) => {
 
 exports.changePassword = (req, res) => {
     console.log('Gonna change password -->', req.body);
-    User.findOneAndUpdate({email: req.body.userEmail, password: req.body.opwd}, {password: req.body.pwd}, (err, user) => {
-        console.log('User--->', user);
+    console.log('req.params.id -->', req.params.id);
+    User.findOneAndUpdate({_id: req.params.id, password: req.body.opwd}, {password: req.body.pwd}, (err, user) => {
         if(err) {
             res.status(500).send({message: err});
             return;
@@ -94,13 +81,12 @@ exports.changePassword = (req, res) => {
 exports.updateUserProfile = (req, res) => {
     console.log('Gonna Update User Profile -->', req.body);
     const currDateStr = new Date().toLocaleString();
-    User.findOneAndUpdate({_id: req.body._id}, 
+    User.findOneAndUpdate({_id: req.params.id}, 
         {
             mobileno: req.body.mobileNo,
             pan: req.body.PANNo,
             modifiedDate: currDateStr
         }, (err, user) => {
-        console.log('User--->', user);
         if(err) {
             res.status(500).send({message: err});
             return;
@@ -118,7 +104,7 @@ exports.updateUserProfile = (req, res) => {
 exports.updateUserDetails = (req, res) => {
     console.log('Gonna Update User -->', req.body);
     const currDateStr = new Date().toLocaleString();
-    User.findOneAndUpdate({_id: req.body._id}, 
+    User.findOneAndUpdate({_id: req.params.id}, 
         {
             name: req.body.uName,
             email: req.body.uMail,
@@ -126,10 +112,8 @@ exports.updateUserDetails = (req, res) => {
             mobileno: req.body.uMobile,
             pan: req.body.uPAN,
             gender: req.body.uGender,
-            createdDate: dateStr,
             modifiedDate: currDateStr
         }, (err, user) => {
-        console.log('User--->', user);
         if(err) {
             res.status(500).send({message: err});
             return;
@@ -149,7 +133,7 @@ exports.createNewUser = (req, res) => {
     const roleStr = 'level1';
     const password = process.env.DEFAULT_USER_PASSWORD || authConfig.defaultUserPassword;
     const hashedPassword = CryptoJS.SHA256(password).toString();
-    const dateStr = new Date().toTimeString();
+    const dateStr = new Date().toLocaleString();
     const user = new User({
         name: req.body.uName,
         email: req.body.uMail,
