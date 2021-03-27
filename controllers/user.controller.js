@@ -12,12 +12,12 @@ exports.getUser = (req, res) => {
         User.findOne({ _id: req.params.id }, 'name email mobileno gender age pan hobbies')
         .exec((err, user) => {
             if(err) {
-                res.status(500).send({message: err});
+                res.status(500).send({message: err, status: 0});
                 return;
             }
     
             if(!user) {
-                res.status(404).send({message: 'User Not found'});
+                res.status(404).send({message: 'User Not found', status: 0});
                 return;
             }
     
@@ -30,12 +30,12 @@ exports.getUsersList = (req, res) => {
     User.find({}, 'name email mobileno gender age pan hobbies')
     .exec((err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'Could not fetch users.'});
+            res.status(404).send({message: 'Could not fetch users.', status: 0});
             return;
         }
         console.log('GONNA SEND USERS LIST');
@@ -47,16 +47,16 @@ exports.deleteUser = (req, res) => {
     console.log('Gonna Delete User -->', req);
     User.findByIdAndRemove(req.params.id, (err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User could not be deleted.'});
+            res.status(404).send({message: 'User could not be deleted.', status: 0});
             return;
         }
         console.log('GONNA SEND "DELETED" RESPONSE');
-        res.status(200).send({message: 'User has been deleted successfully.'});
+        res.status(200).send({message: 'User has been deleted successfully.', status: 1});
     });
 }
 
@@ -65,16 +65,16 @@ exports.changePassword = (req, res) => {
     console.log('req.params.id -->', req.params.id);
     User.findOneAndUpdate({_id: req.params.id, password: req.body.opwd}, {password: req.body.pwd}, (err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'Password could not be Changed.'});
+            res.status(404).send({message: 'Password could not be Changed.', status: 0});
             return;
         }
         console.log('GONNA SEND "CHANGE PASSWORD" RESPONSE');
-        res.status(200).send({message: 'Password has been changed successfully.'});
+        res.status(200).send({message: 'Password has been changed successfully.', status: 1});
     });
 }
 
@@ -88,16 +88,16 @@ exports.updateUserProfile = (req, res) => {
             modifiedDate: currDateStr
         }, (err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User Profile could not be updated.'});
+            res.status(404).send({message: 'User Profile could not be updated.', status: 0});
             return;
         }
         console.log('GONNA SEND "UPDATE USER PROFILE" RESPONSE');
-        res.status(200).send({message: 'User Profile has been updated successfully.'});
+        res.status(200).send({message: 'User Profile has been updated successfully.', status: 1});
     });
 }
 
@@ -115,16 +115,16 @@ exports.updateUserDetails = (req, res) => {
             modifiedDate: currDateStr
         }, (err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User details could not be updated.'});
+            res.status(404).send({message: 'User details could not be updated.', status: 0});
             return;
         }
         console.log('GONNA SEND "UPDATE USER DETAILS" RESPONSE');
-        res.status(200).send({message: 'User details has been updated successfully.'});
+        res.status(200).send({message: 'User details has been updated successfully.', status: 1});
     });
 }
 
@@ -149,15 +149,15 @@ exports.createNewUser = (req, res) => {
 
     user.save((err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(500).send({message: 'Could not create the new user. Check with the admin'});
+            res.status(500).send({message: 'Could not create the new user. Check with the admin', status: 0});
         }
 
-        res.send({message: 'User is Created Successfully!'});
+        res.send({message: 'User is Created Successfully!', status: 1});
     });
 }
 

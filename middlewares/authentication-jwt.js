@@ -33,7 +33,7 @@ isAdmin = (req, res, next) => {
     console.log('Verified User Role is-->', this.userRole);
     User.find({_id: this.id}).exec((err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
         console.log('User is-->', user);
@@ -45,7 +45,7 @@ isAdmin = (req, res, next) => {
             return;
         }
 
-        res.status(403).send({message: 'Required Admin Role!'});
+        res.status(403).send({message: 'Required Admin Role!', status: 0});
         return;
 
     });

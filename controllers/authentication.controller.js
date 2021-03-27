@@ -30,15 +30,15 @@ exports.signup = (req, res) => {
 
     user.save((err, user) => {
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(500).send({message: 'Could not register the register. Check with the admin'});
+            res.status(500).send({message: 'Could not register the register. Check with the admin', status: 0});
         }
 
-        res.send({message: 'User is Registered Successfully!'});
+        res.send({message: 'User is Registered Successfully!', status: 1});
     });
 }
 
@@ -50,17 +50,17 @@ exports.signin = (req, res) => {
     .exec((err, user) => {
         console.log('User--->', user);
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User Not found'});
+            res.status(404).send({message: 'User Not found', status: 0});
             return;
         }
 
         if(user.password !== req.body.pwd) {
-            res.status(401).send({message: 'Invalid password'});
+            res.status(401).send({message: 'Invalid password', status: 0});
             return;
         }
 
@@ -79,7 +79,7 @@ exports.resetPassword = (req, res) => {
     const mailRegex = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
 
     if (!mailRegex.test(req.body.uMail)) {
-        res.status(500).send({message: 'Email is not valid.'});
+        res.status(500).send({message: 'Email is not valid.', status: 0});
         return;
     }
 
@@ -89,12 +89,12 @@ exports.resetPassword = (req, res) => {
     .exec((err, user) => {
         console.log('User--->', user);
         if(err) {
-            res.status(500).send({message: err});
+            res.status(500).send({message: err, status: 0});
             return;
         }
 
         if(!user) {
-            res.status(404).send({message: 'User Not found'});
+            res.status(404).send({message: 'User Not found', status: 0});
             return;
         }
 
@@ -116,7 +116,7 @@ exports.resetPassword = (req, res) => {
 
             User.findOneAndUpdate({email: req.body.uMail}, {password: hashedPassword}, (err, user) => {
                 if(err) {
-                    res.status(500).send({message: 'Could not reset password, ' + err});
+                    res.status(500).send({message: 'Could not reset password, ' + err, status: 0});
                     return;
                 }
 
@@ -142,7 +142,7 @@ exports.resetPassword = (req, res) => {
             transporter.sendMail(mailOptions, (error, success) => {
                 if(err) {
                     console.log('Error...Could not send email');
-                    res.status(500).send({message: 'Could not reset password, ' + err});
+                    res.status(500).send({message: 'Could not reset password, ' + err, status: 0});
                     return;
                 } else {
                     console.log('MAil sent...', success);
@@ -150,7 +150,7 @@ exports.resetPassword = (req, res) => {
             });
 
 
-            res.status(200).send({message: 'Your password has been reset and the new password has been sent your registered email. Try logging in with your new password.'});
+            res.status(200).send({message: 'Your password has been reset and the new password has been sent your registered email. Try logging in with your new password.', status: 1});
             return;
         }
 
